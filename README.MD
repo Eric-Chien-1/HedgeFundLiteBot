@@ -17,35 +17,6 @@ It combines historical price data, news sentiment analysis, and trade quality sc
 - Trade Quality Score (TQS) debugging tool with detailed logs and CSV output
 
 ---
-
-## Project Structure
-
-HedgeFundLiteBot/
-│
-├── Config.py
-├── Main.py
-├── requirements.txt
-├── README.md
-│
-├── Backtester/
-│ ├── Engine.py
-│ ├── MonteCarlo.py
-│
-├── Strategy/
-│ ├── Scanner.py
-│
-├── Analysis/
-│ ├── Sentiment.py
-│ ├── Correlation.py
-│
-├── Scrapers/
-│ ├── NewsScraper.py
-│ ├── PriceScraper.py
-│
-└── Tests/
-├── TqsDebugTest.py
-
----
 ## Installation
 
 Install all dependencies:
