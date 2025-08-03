@@ -21,27 +21,39 @@ This modular project combines price data, news sentiment, and smart trade qualit
 ## 🗂️ Project Structure
 
 HedgeFundLiteBot/
+
 ├── Config.py
+
 ├── Main.py
+
 ├── requirements.txt
+
 ├── README.md
 
 ├── Backtester/
+
 │ ├── Engine.py
+
 │ ├── MonteCarlo.py
 
 ├── Strategy/
+
 │ ├── Scanner.py
 
 ├── Analysis/
+
 │ ├── Sentiment.py
+
 │ ├── Correlation.py
 
 ├── Scrapers/
+
 │ ├── NewsScraper.py
+
 │ ├── PriceScraper.py
 
 └── Tests/
+
 ├── TqsDebugTest.py
 
 
