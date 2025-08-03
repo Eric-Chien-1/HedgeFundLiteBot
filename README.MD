@@ -45,8 +45,6 @@ HedgeFundLiteBot/
 └── Tests/
 ├── TqsDebugTest.py
 
-yaml
-Copy
 
 ---
 
