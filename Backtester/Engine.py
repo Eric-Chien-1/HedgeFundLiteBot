@@ -1,30 +1,44 @@
-# Backtester/Engine.py
-
 import pandas as pd
 import logging
 from Scrapers.NewsScraper import NewsScraper
-from Scrapers.PriceScraper import PriceScraper
 from Analysis.Sentiment import analyzeSentiment
 from Analysis.Correlation import correlateSentimentWithPrice
 from Strategy.Scanner import Scanner
 from Backtester.MonteCarlo import MonteCarlo
-
+from Scrapers.PriceScraper import PriceScraper
+from utils.DataCleaner import clean_ohlcv
 class Engine:
     def __init__(self, config):
         self.config = config
         self.log = logging.getLogger(__name__)
 
-    def runBacktest(self, symbol, startDate, endDate):
+    def runBacktest(self, symbol, startDate, endDate, priceData=None):
+        """
+        Runs a backtest using cleaned price data.
+        If priceData is not provided, it will fetch it internally.
+        """
+
         # Step 1: Price data
-        priceScraper = PriceScraper(symbol)
-        priceData = priceScraper.getHistoricalData(startDate, endDate)
+        if priceData is None:
+            self.log.warning("No cleaned price data provided. Fetching inside Engine (less efficient).")
+            scraper = PriceScraper(symbol)
+            raw_data = scraper.getHistoricalData(startDate, endDate)
+            priceData = clean_ohlcv(raw_data, source_name="Engine")
+
+        if priceData.empty:
+            self.log.error("No usable price data available for backtest.")
+            return {
+                "finalBalance": 0,
+                "winRate": 0,
+                "expectedValue": 0,
+                "monteCarlo": (0, 0, 0)
+            }
 
         # Step 2: News & Sentiment (only if enabled)
         sentimentData = None
         if self.config.useSentiment:
             newsScraper = NewsScraper(self.config.newsApiKey, query=symbol)
             newsData = newsScraper.scrapeNews(startDate, endDate)
-
             sentimentData = analyzeSentiment(newsData)
             corr, _ = correlateSentimentWithPrice(sentimentData, priceData)
             self.log.info(f"Sentiment-Price correlation: {corr:.4f}")

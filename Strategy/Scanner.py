@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 import logging
-
+from utils.DataCleaner import sort_by_datetime_safe
 class Scanner:
     def __init__(self, config):
         self.config = config
@@ -13,14 +13,42 @@ class Scanner:
     # Indicator Calculations
     # =========================
     def _calculateIndicators(self, priceData):
-        """Pre-calculate RVOL, MACD, and RSI."""
         df = priceData.copy()
 
-        # RVOL
-        df["avg_vol"] = df["volume"].rolling(window=20).mean()
-        df["rvol"] = df["volume"] / df["avg_vol"]
+       
+        if isinstance(df.columns, pd.MultiIndex):
+            df.columns = [' '.join(col).strip().lower() for col in df.columns.values]
+        else:
+            df.columns = [c.lower() for c in df.columns]
 
-        # MACD
+        if "datetime" not in df.columns:
+            self.log.warning("No datetime column found in Scanner data. Creating placeholder.")
+            df["datetime"] = pd.NaT
+
+        required_cols = ["open", "high", "low", "close", "volume"]
+        missing_cols = [col for col in required_cols if col not in df.columns]
+        if missing_cols:
+            self.log.warning(f"Missing OHLC columns in Scanner data: {missing_cols}. Filling with NaN/dummy values.")
+            for col in missing_cols:
+                if col == "volume":
+                    df[col] = 1
+                else:
+                    df[col] = float("nan")
+
+        vol_series = df["volume"]
+        no_volume_column = "volume" not in df.columns
+        volume_all_na = bool(vol_series.isna().all())
+        volume_all_zero = bool((vol_series == 0).all())
+        if no_volume_column or volume_all_na or volume_all_zero:
+            self.log.warning("No usable volume data found in Scanner. Using dummy values.")
+            df["volume"] = 1
+            df["avg_vol"] = 1
+            df["rvol"] = 1
+        else:
+            df["avg_vol"] = df["volume"].rolling(window=20).mean()
+            df["rvol"] = df["volume"] / df["avg_vol"]
+
+        #  MACD
         ema12 = df["close"].ewm(span=12, adjust=False).mean()
         ema26 = df["close"].ewm(span=26, adjust=False).mean()
         df["macd_line"] = ema12 - ema26
@@ -34,6 +62,7 @@ class Scanner:
         df["rsi"] = 100 - (100 / (1 + rs))
 
         return df
+
 
     # =========================
     # Confirmation Scoring
@@ -118,14 +147,32 @@ class Scanner:
     # Sentiment Matching
     # =========================
     def getSentimentForTime(self, timestamp, sentimentData):
+        """
+        Finds the sentiment_score whose timestamp is closest to `timestamp`,
+        in an NA-safe, warning-free way.
+        """
         if not self.config.useSentiment or sentimentData is None or sentimentData.empty:
             return 0
-        closest = sentimentData.iloc[
-            (sentimentData["datetime"] - timestamp).abs().argsort()[:1]
-        ]
-        if not closest.empty:
-            return int(closest["sentiment_score"].values[0])
-        return 0
+
+        # 1. Drop NA datetimes and sort
+        valid = sort_by_datetime_safe(sentimentData, "datetime")
+        if valid.empty:
+            return 0
+
+        # 2. Compute absolute time differences
+        diffs = (valid["datetime"] - timestamp).abs()
+
+        # 3. Drop any NA diffs (shouldn’t happen after sort_by_datetime_safe, but safe)
+        diffs = diffs.dropna()
+        if diffs.empty:
+            return 0
+
+        # 4. Find the index of the smallest difference
+        best_idx = diffs.idxmin()
+
+        # 5. Return the corresponding sentiment_score
+        return int(valid.at[best_idx, "sentiment_score"])
+
 
     # =========================
     # Scan for Trades

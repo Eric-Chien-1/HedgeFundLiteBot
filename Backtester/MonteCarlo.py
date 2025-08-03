@@ -1,5 +1,4 @@
 # Backtester/MonteCarlo.py
-
 import numpy as np
 
 class MonteCarlo:

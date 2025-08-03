@@ -2,7 +2,7 @@
 
 class Config:
     # API Keys
-    newsApiKey = "YOUR_NEWSAPI_KEY"
+    newsApiKey = "815b8274e8f94a5db950c060865bb3db"
 
     # Backtest parameters
     startBalance = 5000

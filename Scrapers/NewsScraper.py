@@ -1,5 +1,3 @@
-# Scrapers/NewsScraper.py
-
 import requests
 import pandas as pd
 import logging
@@ -15,13 +13,7 @@ class NewsScraper:
     def scrapeNews(self, startDate, endDate):
         """
         Fetch news articles between startDate and endDate.
-
-        Parameters:
-            startDate: str YYYY-MM-DD
-            endDate: str YYYY-MM-DD
-
-        Returns:
-            DataFrame with datetime and title
+        Returns tz-naive datetime DataFrame.
         """
         log.info(f"Fetching news for '{self.query}' from {startDate} to {endDate}...")
 
@@ -55,5 +47,14 @@ class NewsScraper:
                 titles.append(title)
                 datetimes.append(pd.to_datetime(published_at))
 
+        # Create DataFrame
         df = pd.DataFrame({"datetime": datetimes, "title": titles})
-        return df.sort_values("datetime").reset_index(drop=True)
+
+        # Normalize datetime to tz-naive
+        df["datetime"] = pd.to_datetime(df["datetime"]).dt.tz_localize(None)
+
+        # Sort chronologically
+        df = df.sort_values("datetime").reset_index(drop=True)
+
+        log.info(f"Retrieved {len(df)} news articles for '{self.query}'.")
+        return df

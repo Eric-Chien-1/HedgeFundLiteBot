@@ -30,6 +30,7 @@ HedgeFundLiteBot/
 ├── Backtester/
 │ ├── Engine.py
 │ ├── MonteCarlo.py
+│ ├── RollingBacttesting.py
 
 ├── Strategy/
 │ ├── Scanner.py
@@ -45,8 +46,6 @@ HedgeFundLiteBot/
 └── Tests/
 ├── TqsDebugTest.py
 ```
-
-
 ---
 
 ## ⚙️ Installation
@@ -79,6 +78,41 @@ Or custom date ranges:
 python Main.py --mode backtest --symbol MES --start 2023-01-01 --end 2023-06-01
 ```
 
+---
+
+## 🏁 Running Multi-Symbol Backtests
+
+You can now run backtests on multiple symbols in one go by using the `--symbols` argument with a comma-separated list:
+
+```bash
+python Main.py --mode backtest --symbols MES,NQ,ES --testMode quick
+```
+
+This will run the backtest sequentially for MES, NQ, and ES with the quick 30-day test mode.
+
+## Output
+
+• Individual trade logs will be saved as TradeLog_MES.csv, TradeLog_NQ.csv, TradeLog_ES.csv, etc.
+
+• An aggregated summary CSV BacktestSummary.csv will be created with the key metrics for all symbols.
+
+## Single Symbol Backtest
+
+If you prefer to backtest a single symbol, use --symbol:
+
+```bash
+python Main.py --mode backtest --symbol MES --testMode medium
+```
+If neither --symbol nor --symbols is specified, the backtester defaults to the symbol set in Config.py (defaultSymbol).
+
+## Custom Date Ranges
+
+You can also specify exact start and end dates instead of using test modes:
+
+```bash
+python Main.py --mode backtest --symbol MES --start 2023-01-01 --end 2023-06-01
+
+```
 ---
 
 ## 🔍 TQS Debug Tool
