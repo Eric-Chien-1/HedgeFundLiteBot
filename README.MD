@@ -64,6 +64,7 @@ python Main.py --mode backtest --symbol MES --testMode quick
 ```
 
 Test modes:
+
 • 🟢 quick (last 30 days, sentiment + technical)
 
 • 🟡 medium (last 60 days, sentiment + technical)
