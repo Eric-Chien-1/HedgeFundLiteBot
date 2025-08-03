@@ -1,97 +1,112 @@
-# HedgeFundLiteBot - Phase 1 Backtester
+# HedgeFundLiteBot 🚀📈
 
-This project is the Phase 1 modular backtesting engine for the HedgeFundLite futures trading bot.  
-It combines historical price data, news sentiment analysis, and trade quality scoring (TQS) to simulate trades and evaluate performance.
+Welcome to the **Phase 1** backtesting engine for your HedgeFundLite futures trading bot!  
+This modular project combines price data, news sentiment, and smart trade quality scoring (TQS) to simulate and analyze trading performance.
+
+---
+
+## ✨ Features
+
+- 📊 Historical price scraping via yfinance (MES, MNQ, others)  
+- 📰 News scraping with NewsAPI + TextBlob sentiment analysis  
+- 🔍 Pattern detection: BOS, Sweep, Breakout, Support/Resistance Bounce  
+- ✅ Confirmation scoring: RVOL, MACD, RSI  
+- 🤖 Sentiment integration (auto-disabled for long backtests)  
+- 🎲 Monte Carlo simulations for robustness testing  
+- 🕐 Quick / Medium / Long test modes for flexible backtesting  
+- 🛠️ TQS Debug tool with detailed logs and CSV output  
 
 ---
 
-## Features
+## 🗂️ Project Structure
 
-- Historical price data scraping via yfinance (MES, MNQ, and others)
-- News scraping via NewsAPI with sentiment scoring using TextBlob
-- Pattern-based trade detection (BOS, Sweep, Breakout, S/R Bounce)
-- Confirmation scoring with RVOL, MACD, RSI
-- Sentiment integration with auto-disable for long backtests
-- Monte Carlo simulations for robustness testing
-- Quick / Medium / Long test modes for flexible backtesting windows
-- Trade Quality Score (TQS) debugging tool with detailed logs and CSV output
+HedgeFundLiteBot/
+├── Config.py
+├── Main.py
+├── requirements.txt
+├── README.md
+
+├── Backtester/
+│ ├── Engine.py
+│ ├── MonteCarlo.py
+
+├── Strategy/
+│ ├── Scanner.py
+
+├── Analysis/
+│ ├── Sentiment.py
+│ ├── Correlation.py
+
+├── Scrapers/
+│ ├── NewsScraper.py
+│ ├── PriceScraper.py
+
+└── Tests/
+├── TqsDebugTest.py
+
 
 ---
-## Installation
 
-Install all dependencies:
+## ⚙️ Installation
 
+Install dependencies with:  
 ```bash
 pip install -r requirements.txt
 ```
-
 ---
 
-## Running Backtests
+## 🏁 Running Backtests
 
-Run a backtest for a symbol over a date range or a test mode window:
+Run backtests easily with test modes:
 
 ```bash
 python Main.py --mode backtest --symbol MES --testMode quick
 ```
 
-Options for --testMode:
+Test modes:
+• 🟢 quick (last 30 days, sentiment + technical)
 
-quick: Last 30 days (sentiment + technical)
+• 🟡 medium (last 60 days, sentiment + technical)
 
-medium: Last 60 days (sentiment + technical)
+• 🔴 long (last 365 days, technical-only, sentiment disabled)
 
-long: Last 365 days (technical-only; sentiment disabled)
-
-Or specify custom dates:
+Or custom date ranges:
 
 ```bash
 python Main.py --mode backtest --symbol MES --start 2023-01-01 --end 2023-06-01
 ```
+
 ---
 
-## TQS Debug Tool
+## 🔍 TQS Debug Tool
 
-Run the TQS debugging tool to see detailed scoring on real MES data:
+See detailed TQS scoring with:
 
 ```bash
 python Tests/TqsDebugTest.py
 ```
-This prints detailed pattern, confirmation, and sentiment scores per trade and saves a CSV TqsDebugResults.csv.
+Logs and CSV export let you explore exactly how trades are scored.
 
 ---
 
-## Phase 2: Live & Paper Trading (Planned)
+## 🚀 Phase 2: Live & Paper Trading (Planned)
 
-The Phase 2 extension will add:
+Stay tuned for:
 
-• Live price and news feeds from Rithmic, IBKR, or Tradovate
+•⚡ Real-time price & news feeds
 
-• Real-time sentiment scoring with Benzinga or similar
+• 🤖 Live sentiment scoring (Benzinga or similar)
 
-• Order execution with stop loss, take profit, and scaling
+• 💹 Trade execution and position management
 
-• Real-time PnL and performance monitoring dashboard
+• 📊 Monitoring dashboards
 
-• Persistent data storage for model improvement
-
-• Backtester entry point will be extended with:
-
-```bash
-python Main.py --mode live --symbol MES
-
-```
----
-
-## Notes
-• Sentiment filtering is disabled automatically in long test mode due to NewsAPI historical data limits.
-
-• Confirmation factors (RVOL, MACD, RSI) help reduce false signals and improve quality scoring.
-
-• The project is modular and designed for easy extension into live trading and paper trading.
+• 🗄️ Persistent data storage
 
 ---
-## Contact
-For questions or contributions, reach out anytime.
 
-Thank you for using HedgeFundLiteBot!
+## 📬 Questions?
+
+Reach out anytime — happy to help!
+
+Thanks for choosing HedgeFundLiteBot! 🎉
