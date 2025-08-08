@@ -1,8 +1,8 @@
 import argparse
 import logging
 from datetime import datetime, timedelta
-from config import Config
-from Backtester.Engine import Engine
+from config.config import Config
+from Backtester.BacktestEngine import Engine
 from Scrapers.PriceScraper import PriceScraper
 from utils.DataCleaner import clean_ohlcv  # ✅ NEW
 

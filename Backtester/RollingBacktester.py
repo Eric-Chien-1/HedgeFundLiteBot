@@ -4,7 +4,7 @@ from datetime import timedelta
 from Scrapers.PriceScraper import PriceScraper
 from Scrapers.NewsScraper import NewsScraper
 from Analysis.Sentiment import analyzeSentiment
-from config import Config
+from config.config import Config
 
 import logging
 
@@ -70,7 +70,7 @@ class RollingBacktester:
         for t in thresholds:
             self.config.tqsThreshold = t
 
-            from Backtester.Engine import Engine
+            from Backtester.BacktestEngine import Engine
             engine = Engine(self.config)
             result = engine.runBacktest(
                 self.symbol,
@@ -94,7 +94,7 @@ class RollingBacktester:
 
             log.info(f"Backtesting on test window {testStart.date()} to {testEnd.date()} with TQS threshold {bestThreshold}")
 
-            from Backtester.Engine import Engine
+            from Backtester.BacktestEngine import Engine
             engine = Engine(self.config)
             result = engine.runBacktest(
                 self.symbol,

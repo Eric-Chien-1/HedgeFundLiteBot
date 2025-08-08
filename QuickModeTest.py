@@ -2,7 +2,7 @@ import logging
 from datetime import datetime, timedelta
 from Scrapers.PriceScraper import PriceScraper
 from Strategy.Scanner import Scanner
-from config import Config
+from config.config import Config
 from utils.DataCleaner import clean_ohlcv
 
 # ===== Logging setup =====
